@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>クイックメモ</title>
+<meta name="theme-color" content="#1c1d20">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="クイックメモ">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231c1d20'/%3E%3Cpath d='M18 20h28M18 32h28M18 44h16' stroke='%23e8b04a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231c1d20'/%3E%3Cpath d='M18 20h28M18 32h28M18 44h16' stroke='%23e8b04a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="manifest" href='data:application/manifest+json,{"name":"クイックメモ","short_name":"メモ","display":"standalone","background_color":"#1c1d20","theme_color":"#1c1d20","start_url":".","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 fill=%27%231c1d20%27/%3E%3Cpath d=%27M18 20h28M18 32h28M18 44h16%27 stroke=%27%23e8b04a%27 stroke-width=%276%27 stroke-linecap=%27round%27/%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any"}]}'>
+<style>
+:root{--bg:#1c1d20;--panel:#25272b;--line:#34373d;--tx:#ece9e2;--mute:#9a9ca3;--ac:#e8b04a;--acx:#1c1d20;--danger:#e0766a;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,"Hiragino Sans","Yu Gothic UI","Noto Sans JP",system-ui,sans-serif;display:flex;flex-direction:column;padding-top:var(--safe-t);overflow:hidden}
+button{font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:8px;cursor:pointer;min-height:40px;padding:0 12px}
+button:hover{border-color:var(--mute)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+header{display:flex;align-items:center;gap:6px;padding:8px 10px 0;flex:none}
+header h1{font-size:15px;margin:0;font-weight:700;flex:1;letter-spacing:.02em}
+.ib{width:40px;padding:0;display:grid;place-items:center;font-size:16px}
+#sync{font-size:12px;color:var(--mute);display:flex;align-items:center;gap:4px;padding:0 6px;white-space:nowrap}
+#sync.ok{color:#8fc98f}#sync.busy{color:var(--ac)}#sync.off{color:var(--danger)}
+.compact header h1,.compact #sync span,.compact #bk,.compact #setb{display:none}
+.compact header{padding:4px 8px 0}
+.entry{display:flex;gap:6px;padding:8px 10px;flex:none;align-items:flex-end}
+#inp{flex:1;resize:none;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:16px;line-height:1.4;max-height:30vh;min-height:42px}
+#inp:focus{border-color:var(--ac);outline:none}
+#add{background:var(--ac);color:var(--acx);border-color:var(--ac);font-weight:700;width:56px;padding:0;min-height:42px}
+#mic{width:44px;padding:0;min-height:42px;font-size:17px}
+#mic.rec{background:var(--danger);border-color:var(--danger);color:#fff}
+#mic[hidden]{display:none}
+nav{display:flex;padding:0 10px;gap:4px;flex:none;border-bottom:1px solid var(--line)}
+nav button{flex:1;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--mute);min-height:42px}
+nav button.on{color:var(--ac);border-bottom-color:var(--ac);font-weight:700}
+.bar{display:flex;gap:6px;padding:8px 10px 4px;flex:none}
+.bar input{flex:1;min-width:0;background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:16px;min-height:40px}
+.bar button{flex:none;font-size:13px}
+#list{flex:1;overflow-y:auto;padding:4px 10px calc(70px + var(--safe-b));-webkit-overflow-scrolling:touch}
+.memo{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px}
+.memo .t{white-space:pre-wrap;word-break:break-word}
+.memo .d{font-size:11px;color:var(--mute);margin-top:4px}
+.acts{display:flex;gap:6px;margin-top:8px}
+.acts button{flex:1;min-height:44px;font-size:13px}
+.acts .mv{color:var(--ac)}.acts .rm{color:var(--danger)}
+.empty{color:var(--mute);text-align:center;padding:40px 10px;font-size:14px}
+#toast{position:fixed;left:50%;bottom:calc(16px + var(--safe-b));transform:translateX(-50%);background:#3a3d44;border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 14px;display:none;align-items:center;gap:10px;z-index:30;max-width:92vw;font-size:14px}
+#toast.show{display:flex}
+#toast button{min-height:34px;color:var(--ac);background:none;border:0;font-weight:700}
+dialog{background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:12px;width:min(560px,94vw);max-height:90vh;padding:16px;overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h2{font-size:16px;margin:0 0 8px}dialog h3{font-size:14px;margin:16px 0 6px;color:var(--ac)}
+dialog label{display:block;font-size:12px;color:var(--mute);margin:8px 0 2px}
+dialog input,dialog textarea{width:100%;background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:16px;font-family:inherit}
+dialog textarea{height:70px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+dialog ol{font-size:13px;color:var(--mute);padding-left:20px;margin:4px 0}
+dialog .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>クイックメモ</h1>
+  <div id="sync" class="off" title="同期状態">●<span>未設定</span></div>
+  <button class="ib" id="syncb" title="今すぐ同期">⟳</button>
+  <button class="ib" id="setb" title="設定・バックアップ">⚙</button>
+  <button class="ib" id="cmp" title="コンパクト表示">⇱</button>
+</header>
+<div class="entry">
+  <textarea id="inp" rows="1" placeholder="思いついたらすぐ書く（Enterで追加 / Shift+Enterで改行）" enterkeyhint="send"></textarea>
+  <button id="mic" title="音声入力" hidden>🎤</button>
+  <button id="add" title="追加">追加</button>
+</div>
+<nav>
+  <button id="t-inbox" class="on">インボックス <span id="c-inbox"></span></button>
+  <button id="t-stock">アイデア倉庫 <span id="c-stock"></span></button>
+</nav>
+<div class="bar" id="bar">
+  <input id="q" type="search" placeholder="倉庫内を検索" hidden>
+  <button id="ai">AI整理用に一括コピー</button>
+</div>
+<div id="list"></div>
+<div id="toast"><span id="tmsg"></span><button id="tund" hidden>元に戻す</button></div>
+
+<dialog id="dlg">
+  <h2>設定・同期・バックアップ</h2>
+  <h3>GitHub Gist 同期</h3>
+  <label>Personal Access Token（gistスコープのみ）</label>
+  <input id="tok" type="password" autocomplete="off" placeholder="ghp_… / github_pat_…">
+  <label>Gist ID（空欄なら初回同期で非公開Gistを自動作成）</label>
+  <input id="gid" autocomplete="off" placeholder="例: 1a2b3c4d5e6f…">
+  <div class="row"><button id="ssave">保存して同期</button><button id="sclear">認証情報を削除</button></div>
+  <ol>
+    <li>GitHub → Settings → Developer settings → Personal access tokens で新規トークンを作成（Classicなら <b>gist</b> のみにチェック）。</li>
+    <li>上の欄にトークンを貼り、「保存して同期」。Gist ID が空なら自動で非公開Gistが作られ、ここに表示されます。</li>
+    <li>スマホなど別端末では、同じトークンと表示された Gist ID を入力すれば同じメモを共有できます（トークンは端末の localStorage にのみ保存されます）。</li>
+  </ol>
+  <h3>手動バックアップ（JSON）</h3>
+  <div class="row"><button id="jcopy">JSONを一括コピー</button><button id="jimp">貼り付けをインポート（マージ）</button></div>
+  <label>インポート用（ここにJSONを貼り付け）</label>
+  <textarea id="jarea" placeholder="JSONを貼り付け"></textarea>
+  <div class="row"><button id="dclose" style="margin-left:auto">閉じる</button></div>
+</dialog>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const K={memos:'qm_memos_v1',tab:'qm_tab',tok:'qm_token',gid:'qm_gist',cmp:'qm_compact'};
+const FILE='quick-memo.json';
+const isTouch=matchMedia('(pointer:coarse)').matches;
+const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+let memos=[];try{memos=JSON.parse(ls.get(K.memos)||'[]')}catch(e){}
+let tab=ls.get(K.tab)==='stock'?'stock':'inbox';
+let lastDel=null,toastT=null,pushT=null,syncing=false,again=false,recog=null;
+
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const save=()=>ls.set(K.memos,JSON.stringify(memos));
+const live=()=>memos.filter(m=>!m.deleted);
+const view=()=>live().filter(m=>m.box===tab).sort((a,b)=>b.createdAt-a.createdAt);
+const fmt=t=>{const d=new Date(t);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function render(){
+  $('t-inbox').classList.toggle('on',tab==='inbox');
+  $('t-stock').classList.toggle('on',tab==='stock');
+  $('q').hidden=tab!=='stock';
+  const L=live();
+  $('c-inbox').textContent='('+L.filter(m=>m.box==='inbox').length+')';
+  $('c-stock').textContent='('+L.filter(m=>m.box==='stock').length+')';
+  let items=view();
+  if(tab==='stock'){const q=$('q').value.trim().toLowerCase();if(q)items=items.filter(m=>m.text.toLowerCase().includes(q))}
+  const el=$('list');
+  if(!items.length){el.innerHTML='<div class="empty">'+(tab==='inbox'?'まだメモがありません。上の欄に書いて Enter。':'倉庫は空です。インボックスから「倉庫へ移動」で保管できます。')+'</div>';return}
+  el.innerHTML=items.map(m=>'<div class="memo" data-id="'+m.id+'"><div class="t">'+esc(m.text)+'</div><div class="d">'+fmt(m.createdAt)+'</div>'+
+    (tab==='inbox'?'<div class="acts"><button class="mv" data-a="mv">倉庫へ移動</button><button data-a="cp">コピー</button><button class="rm" data-a="rm">削除</button></div>'
+    :'<div class="acts"><button data-a="cp">コピー</button><button data-a="bk">インボックスへ戻す</button><button class="rm" data-a="rm">削除</button></div>')+'</div>').join('');
+}
+
+function toast(msg,undo){
+  $('tmsg').textContent=msg;$('tund').hidden=!undo;$('toast').classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>{$('toast').classList.remove('show');lastDel=null},undo?3000:1800);
+}
+async function copy(text){
+  try{await navigator.clipboard.writeText(text);return true}catch(e){
+    const t=document.createElement('textarea');t.value=text;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();
+    let ok=false;try{ok=document.execCommand('copy')}catch(e){}t.remove();return ok}
+}
+const touch=m=>{m.updatedAt=Date.now()};
+function changed(){save();render();schedulePush()}
+
+function addMemo(){
+  const v=$('inp').value.replace(/\s+$/,'');
+  if(!v.trim())return;
+  const n=Date.now();
+  memos.push({id:uid(),text:v,box:'inbox',createdAt:n,updatedAt:n,deleted:false});
+  $('inp').value='';autosize();
+  if(tab!=='inbox'){tab='inbox';ls.set(K.tab,tab)}
+  changed();
+  if(!isTouch)$('inp').focus();
+}
+function autosize(){const i=$('inp');i.style.height='auto';i.style.height=Math.min(i.scrollHeight,innerHeight*.3)+'px'}
+
+$('inp').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();addMemo()}
+});
+$('inp').addEventListener('input',autosize);
+$('add').addEventListener('click',()=>{addMemo();if(isTouch)$('inp').blur()});
+
+$('list').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-a]');if(!b)return;
+  const card=b.closest('.memo'),m=memos.find(x=>x.id===card.dataset.id);if(!m)return;
+  const a=b.dataset.a;
+  if(a==='cp'){copy(m.text).then(ok=>toast(ok?'コピーしました':'コピーに失敗しました'))}
+  else if(a==='mv'){m.box='stock';touch(m);changed();toast('倉庫へ移動しました')}
+  else if(a==='bk'){m.box='inbox';touch(m);changed();toast('インボックスへ戻しました')}
+  else if(a==='rm'){m.deleted=true;touch(m);lastDel=m.id;changed();toast('削除しました',true)}
+});
+$('tund').addEventListener('click',()=>{
+  const m=memos.find(x=>x.id===lastDel);if(m){m.deleted=false;touch(m);changed()}
+  lastDel=null;$('toast').classList.remove('show');
+});
+
+function setTab(t){tab=t;ls.set(K.tab,t);render()}
+$('t-inbox').onclick=()=>setTab('inbox');
+$('t-stock').onclick=()=>setTab('stock');
+$('q').addEventListener('input',render);
+
+$('ai').addEventListener('click',async()=>{
+  const items=view();
+  if(!items.length){toast('コピーするメモがありません');return}
+  const txt='以下は私が作業中に殴り書きした断片メモです。重複やノイズを省き、関連するテーマごとにグルーピングして、創作や作業に活かせる形で整理・要約してください。また、面白そうな展開や次のアクションがあれば3つ提案してください。\n\n【メモ一覧】\n'+
+    items.map(m=>'- '+m.text.replace(/\n/g,'\n  ')).join('\n');
+  toast((await copy(txt))?items.length+'件をAI整理用にコピーしました':'コピーに失敗しました');
+});
+
+/* compact mode */
+function setCompact(on){document.body.classList.toggle('compact',on);ls.set(K.cmp,on?'1':'0');$('cmp').textContent=on?'⇲':'⇱'}
+$('cmp').onclick=()=>setCompact(!document.body.classList.contains('compact'));
+setCompact(ls.get(K.cmp)==='1');
+
+/* voice input */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){
+  $('mic').hidden=false;
+  let base='',final='';
+  $('mic').addEventListener('click',()=>{
+    if(recog){recog.stop();return}
+    recog=new SR();recog.lang='ja-JP';recog.interimResults=true;recog.continuous=true;
+    base=$('inp').value;final='';
+    recog.onresult=e=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const r=e.results[i];if(r.isFinal)final+=r[0].transcript;else interim+=r[0].transcript;
+      }
+      $('inp').value=base+final+interim;autosize();
+    };
+    recog.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')toast('マイクの使用を許可してください')};
+    recog.onend=()=>{recog=null;$('mic').classList.remove('rec');$('mic').textContent='🎤'};
+    try{recog.start();$('mic').classList.add('rec');$('mic').textContent='■'}catch(e){recog=null}
+  });
+}
+
+/* ---------- Sync (GitHub Gist) ---------- */
+const cfg=()=>({tok:ls.get(K.tok)||'',gid:ls.get(K.gid)||''});
+function status(s,label){const el=$('sync');el.className=s;el.innerHTML='●<span>'+label+'</span>'}
+function idle(){
+  if(!cfg().tok)return status('off','未設定');
+  if(!navigator.onLine)return status('off','オフライン');
+  status('ok','同期済み');
+}
+function merge(remote){
+  const map=new Map(memos.map(m=>[m.id,m]));let ch=false;
+  for(const r of remote){
+    if(!r||!r.id)continue;
+    const l=map.get(r.id);
+    if(!l){map.set(r.id,r);ch=true}
+    else if((r.updatedAt||0)>(l.updatedAt||0)){map.set(r.id,r);ch=true}
+  }
+  memos=[...map.values()];
+  return ch;
+}
+const api=(path,opt={})=>fetch('https://api.github.com'+path,Object.assign({},opt,{headers:Object.assign({'Authorization':'Bearer '+cfg().tok,'Accept':'application/vnd.github+json','Content-Type':'application/json'},opt.headers||{})}));
+const payload=()=>JSON.stringify({version:1,memos},null,0);
+
+async function sync(){
+  const c=cfg();
+  if(!c.tok){idle();return}
+  if(!navigator.onLine){idle();return}
+  if(syncing){again=true;return}
+  syncing=true;status('busy','同期中');
+  try{
+    if(!c.gid){
+      const r=await api('/gists',{method:'POST',body:JSON.stringify({description:'Quick Memo data',public:false,files:{[FILE]:{content:payload()}}})});
+      if(!r.ok)throw new Error('create '+r.status);
+      const j=await r.json();ls.set(K.gid,j.id);
+    }else{
+      const r=await api('/gists/'+c.gid);
+      if(!r.ok)throw new Error('pull '+r.status);
+      const j=await r.json();const f=j.files&&j.files[FILE];
+      let remote=[];
+      if(f){let txt=f.content;if(f.truncated){const rr=await fetch(f.raw_url);txt=await rr.text()}
+        try{remote=JSON.parse(txt).memos||[]}catch(e){}}
+      if(merge(remote)){save();render()}
+      const p=await api('/gists/'+c.gid,{method:'PATCH',body:JSON.stringify({files:{[FILE]:{content:payload()}}})});
+      if(!p.ok)throw new Error('push '+p.status);
+    }
+    idle();
+  }catch(e){
+    console.warn(e);
+    status('off',navigator.onLine?'同期エラー':'オフライン');
+  }finally{
+    syncing=false;
+    if(again){again=false;schedulePush()}
+  }
+}
+function schedulePush(){
+  if(!cfg().tok)return;
+  clearTimeout(pushT);pushT=setTimeout(sync,2000);
+}
+$('syncb').onclick=()=>{if(!cfg().tok){$('dlg').showModal();return}sync()};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){sync();focusDesktop()}});
+addEventListener('online',sync);addEventListener('offline',idle);
+
+/* ---------- Settings dialog ---------- */
+$('setb').onclick=()=>{$('tok').value=cfg().tok;$('gid').value=cfg().gid;$('dlg').showModal()};
+$('dclose').onclick=()=>{$('dlg').close();focusDesktop()};
+$('ssave').onclick=()=>{
+  const t=$('tok').value.trim(),g=$('gid').value.trim();
+  if(!t){toast('トークンを入力してください');return}
+  ls.set(K.tok,t);g?ls.set(K.gid,g):ls.del(K.gid);
+  $('dlg').close();sync().then(()=>{if(cfg().gid)toast('Gist ID: '+cfg().gid)});
+};
+$('sclear').onclick=()=>{ls.del(K.tok);ls.del(K.gid);$('tok').value='';$('gid').value='';idle();toast('認証情報を削除しました')};
+$('jcopy').onclick=async()=>toast((await copy(payload()))?'JSONをコピーしました':'コピーに失敗しました');
+$('jimp').onclick=()=>{
+  try{
+    const d=JSON.parse($('jarea').value);const arr=Array.isArray(d)?d:d.memos;
+    if(!Array.isArray(arr))throw 0;
+    merge(arr.filter(m=>m&&m.id&&typeof m.text==='string'));
+    $('jarea').value='';changed();toast('インポートしました');
+  }catch(e){toast('JSONの形式が正しくありません')}
+};
+
+/* ---------- Focus handling (desktop only) ---------- */
+function focusDesktop(){if(!isTouch&&!$('dlg').open)$('inp').focus()}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&!$('dlg').open){e.preventDefault();$('inp').focus()}
+});
+addEventListener('focus',focusDesktop);
+document.addEventListener('click',e=>{
+  if(isTouch)return;
+  if(e.target.closest('input,textarea,dialog,#toast'))return;
+  if(getSelection().toString())return;
+  focusDesktop();
+});
+
+render();idle();focusDesktop();sync();
+})();
+</script>
+</body>
+</html>
