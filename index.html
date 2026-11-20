@@ -34,6 +34,12 @@ header h1{font-size:15px;margin:0;font-weight:700;flex:1;letter-spacing:.02em}
 #mic{width:44px;padding:0;min-height:42px;font-size:17px}
 #mic.rec{background:var(--danger);border-color:var(--danger);color:#fff}
 #mic[hidden]{display:none}
+@media (max-width:600px),(pointer:coarse){
+.entry{flex-wrap:wrap}
+#inp{flex:1 1 100%;min-height:96px;max-height:40vh}
+#mic{flex:0 0 64px;min-height:46px}
+#add{flex:1;min-height:46px;font-size:16px}
+}
 nav{display:flex;padding:0 10px;gap:4px;flex:none;border-bottom:1px solid var(--line)}
 nav button{flex:1;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;color:var(--mute);min-height:42px}
 nav button.on{color:var(--ac);border-bottom-color:var(--ac);font-weight:700}
@@ -162,7 +168,7 @@ function addMemo(){
   changed();
   if(!isTouch)$('inp').focus();
 }
-function autosize(){const i=$('inp');i.style.height='auto';i.style.height=Math.min(i.scrollHeight,innerHeight*.3)+'px'}
+function autosize(){const i=$('inp');i.style.height='auto';i.style.height=Math.min(i.scrollHeight,innerHeight*.4)+'px'}
 
 $('inp').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&e.keyCode!==229){e.preventDefault();addMemo()}
